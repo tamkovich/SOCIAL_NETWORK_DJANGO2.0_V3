@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block head %}
+<title>Profile</title>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="container">
+    <div class="container">
+      <div class="container">
+        <p>Username: {{ user }}</p>
+        <p>First name: {{ user.first_name }}</p>
+        <p>Last name: {{ user.last_name }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Description: {{ user.userprofille.description }}</p>
+        <p>Phone: {{ user.userprofille.phone }}</p>
+        <p>City: {{ user.userprofille.city }}</p>
+        <p>Website: {{ user.userprofille.website }}</p>
+        <p>Sex: {{ user.userprofille.sex }}</p>
+        {%  if user.userprofille.image %}
+          <img src="{{ user.userprofille.image.url }}" width="240">
+        {% else %}
+          {% if user.is_staff %}
+          <img src="/media/profile_image/staff-standart.jpg" width="240">
+          {% elif user.userprofille.sex == 'M' %}
+          <img src="/media/profile_image/gentle-standart.jpg" width="240">
+          {% else %}
+          <img src="/media/profile_image/lady-standart.jpg" width="240">
+          {% endif %}
+        {% endif %}
+        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">    
+          <a href="/chat/dialog-{{myself_id}}-{{user.id}}">
+            <button type="button" class="btn btn-primary">Dialog</button> 
+          </a>
+          {% if user.id != myself_id %}
+          {% if not is_he_your_friend %}
+          <a href="{% url 'home:change_friends' operation='add' pk=user.pk %}">
+            <button type="button" class="btn btn-primary">Add Friend</button> 
+          </a>
+          {% else %}
+          <a href="{% url 'home:change_friends' operation='remove' pk=user.pk %}">
+            <button type="button" class="btn btn-primary">Remove Friend</button> 
+          </a>
+          {% endif %}
+          <a href="{% url 'accounts:sounds' pk=user.pk %}">
+            <button type="button" class="btn btn-primary">Music</button> 
+          </a>
+          <a href="{% url 'accounts:pictures' pk=user.pk %}">
+            <button type="button" class="btn btn-primary">Pictures</button>
+          </a>
+          <a href="{% url 'accounts:files' pk=user.pk %}">
+            <button type="button" class="btn btn-primary">Files</button>
+          </a>
+          {% else %}
+          <a href="{% url 'accounts:sounds' %}">
+            <button type="button" class="btn btn-primary">Music</button> 
+          </a>
+          <a href="{% url 'accounts:pictures' %}">
+            <button type="button" class="btn btn-primary">Pictures</button>
+          </a>
+          <a href="{% url 'accounts:files' %}">
+            <button type="button" class="btn btn-primary">Files</button>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

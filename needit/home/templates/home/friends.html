@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Friends</title>
+<link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+
+{% endblock %}
+{% block body %}
+<div class="container">
+	<div class="col-md-8">
+		<h2>Friends</h2>
+		{% if friends %}
+		<div class="search hidden-xs hidden-sm">
+        <input type="text" placeholder="Искать" id="search">
+    </div>
+		<ul class="list-group">
+			{% for friend in friends %}
+			<li class="list-group-item">
+				<a href="{% url 'accounts:view_profile_with_pk' pk=friend.pk %}">
+					{% if friend.is_staff %}
+	        <div class="user" style="background-image:url('/media/profile_image/staff-standart.jpg')">
+	        {% elif friend.userprofille.image %}
+	        <div class="user" style="background-image:url('{{ friend.userprofille.image.url }}')">
+	        {% else %}
+	          {% if friend.userprofille.sex == 'M' %}
+	            <div class="user" style="background-image:url('/media/profile_image/gentle-standart.jpg')">
+	          {% else %}
+	            <div class="user" style="background-image:url('/media/profile_image/lady-standart.jpg')">
+	          {% endif %}
+	        {% endif %}
+	      	</div>
+      	</a>
+				<div class="btn-group" role="group" aria-label="Default button group"> 
+					<a href="{% url 'accounts:view_profile_with_pk' pk=friend.pk %}">
+						<button type="button" class="btn btn-default">{{ friend.username }}</button>
+					</a>
+					<a href="{% url 'home:change_friends' operation='remove' pk=friend.pk %}"> 
+						<button type="button" class="btn btn-default">Remove Friend</button> 
+					</a>
+				</div>
+			</li><br>
+		  {% endfor %}
+		</ul>
+		{% else %}
+		<div class="alert alert-dark" role="alert">
+			You have 0 friends
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}

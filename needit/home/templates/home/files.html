@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Files</title>
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+	<div class="container">
+		<div class="container">
+			<div class="container">
+				<h2>Pictures</h2>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+    <div class="row">
+        <div class="col-xs-8">
+            <form enctype="multipart/form-data" action="" method="post">
+                {% csrf_token %}
+                {{picture_form.picture}}
+                <hr>
+                <button type="submit" class="btn btn-success btn-lg">Подтвердить</button>
+            </form>
+        </div>
+    </div>
+	</div>
+	{% for picture in pictures %}
+	<p>{{ picture.author }}</p>
+    {% if not picture in my_pictures %}
+    <a href="{% url 'home:change_pictures' operation='add' pk=picture.pk %}">
+        <button type="button" class="btn btn-success">Add Picture</button>
+    </a>
+    {% else %}
+    <a href="{% url 'home:change_pictures' operation='remove' pk=picture.pk %}">
+        <button type="button" class="btn btn-default">Remove Picture</button>
+    </a>
+    {% endif %}
+	<img src="{{ picture.picture.url }}" alt="">
+	{% endfor %}
+	<div class="container">
+		<div class="container">
+			<div class="container">
+				<h2>Sounds</h2>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+    <div class="row">
+        <div class="col-xs-8">
+            <form enctype="multipart/form-data" action="" method="post">
+                {% csrf_token %}
+                {{sound_form.sound_name}}
+                <br>
+                {{sound_form.author}}
+                <hr>
+                {{sound_form.sound}}
+                <br>
+                {{sound_form.picture}}
+                <hr>
+                <button type="submit" class="btn btn-success btn-lg">Подтвердить</button>
+            </form>
+        </div>
+    </div>
+	</div>
+	{% for sound in sounds %}
+  <div class="alert alert-info">
+    <div class="row">
+        <div class="col-xs-2">
+            {% if sound.picture %}
+                <img src="{{ sound.picture.url }}" width="150" height="150">
+            {% endif %}
+        </div>
+        <div class="col-xs-10">
+            <h2><b>Название:</b>{{ sound.author }} - {{ sound.sound_name }}</h2>
+            <audio controls>
+                <source src="{{ sound.sound.url }}" type="audio/mp3">
+              	<source src="{{ sound.sound.url }}" type="audio/ogg; codecs=vorbis">
+				<source src="{{ sound.sound.url }}" type="audio/mpeg">
+				Тег audio не поддерживается вашим браузером. 
+            </audio>
+            {% if not sound in my_sounds %}
+            <a href="{% url 'home:change_sounds' operation='add' pk=sound.pk %}">
+                <button type="button" class="btn btn-success">Add Sound</button>
+            </a>
+            {% else %}
+            <a href="{% url 'home:change_sounds' operation='remove' pk=sound.pk %}">
+                <button type="button" class="btn btn-default">Remove Sound</button>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+  <hr>
+	{% endfor %}
+</div>
+{% endblock %}

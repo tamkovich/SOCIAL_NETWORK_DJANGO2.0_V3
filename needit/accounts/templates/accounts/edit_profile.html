@@ -1,0 +1,22 @@
+		{% extends 'base.html' %}
+
+		{% block head %}
+		<link rel="icon" href="favicon.ico">
+		
+		<title>Профиль</title>
+		{% endblock %}
+		
+		{% block intop %}
+    <div style="background: #020001; height: 150px; margin-bottom: 20px;"></div>
+    {% endblock %}
+
+		{% block body %}
+		<div class="container">
+			<form method="post">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit">Submit</button>
+				<br>
+			</form>
+		</div>
+		{% endblock %}

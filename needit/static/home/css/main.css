@@ -1,0 +1,12 @@
+.breadcrumb {background: rgba(92, 27, 27, 1); background: -webkit-linear-gradient(top, rgba(3, 0, 0, 1) 0%, rgba(92, 27, 27, 1) 100%); background: linear-gradient(to bottom, rgba(3, 0, 0, 1) 0%, rgba(92, 27, 27, 1) 100%); border: 2px solid rgba(61, 35, 52, 1); border-radius: 7px; display: block;}
+.breadcrumb li {font-size: 14px;}
+.breadcrumb a {color: rgba(201, 110, 65, 1);}
+.breadcrumb a:hover {color: rgba(255, 255, 255, 1);}
+.breadcrumb>.active {color: rgba(153, 153, 153, 1);}
+.breadcrumb>li+li:before {color: rgba(204, 204, 204, 1); content: "\276D\00a0";}
+
+.btn-success.outline {
+	color: #d6d6d6;
+	border: 2px solid #d6d6d6;
+	background: rgba(0,0,0,.5);
+}

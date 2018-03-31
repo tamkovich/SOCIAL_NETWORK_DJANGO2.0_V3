@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container">
+	
+	<div class="col-md-8">
+		<h1>Home</h1>
+		<form method="post">
+			{% csrf_token %}
+			{{ form.post }}
+			<br>
+			<button type="submit">Submit</button>
+		</form>
+		<h2>{{ text }}</h2>
+		{% for post in posts %}
+			<h1>{{ post.post }}</h1>
+			<p>Posted by {{ post.user.get_full_name }} on {{ post.created }}</p>
+		{% endfor %}	
+	</div>
+	<div class="col-md-4">
+		<h2>Other People</h2>
+			<ul class="list-group">
+				{% for user in users %}
+				<li class="list-group-item">
+					<a href="{% url 'accounts:view_profile_with_pk' pk=user.pk %}">
+		    		<h3>{{ user.username }}</h3>
+		    	</a>
+					<a href="/chat/dialog-{{your_id}}-{{user.id}}">
+						<span class="glyphicon glyphicon-envelope"></span>
+					</a>
+					{% if not user in friends %}
+					<a href="{% url 'home:change_friends' operation='add' pk=user.pk %}">
+						<button type="button" class="btn btn-success">Add Friend</button>
+					</a>
+					{% endif %}
+				</li>
+				{% endfor %}
+			</ul>
+		<h2>Friends</h2>
+		<div class="btn-group dropleft">
+			<button type="button" class="btn btn-secondary dropdown-toggle">
+			Dropleft
+		</button>
+		<div class="dropdown-menu">
+			
+		</div>
+	</div>
+		 <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-th-large"></span> Аккаунт <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        <li><a href="/account/profile/"><span class="glyphicon glyphicon-user"></span> Профиль</a></li>
+        <li><a href="/account/profile/edit/"><span class="glyphicon glyphicon-edit"></span> Редактировать</a></li>
+        <li><a href="/account/change-password/"><span class="glyphicon glyphicon-wrench"></span> Изменить пароль</a></li>
+        <li><a href="/account/reset-password/"><span class="glyphicon glyphicon-refresh"></span> Восстановить пароль</a></li>
+        <li><a href="/account/logout/"><span class="glyphicon glyphicon-log-out"></span> Выйти</a></li>
+      </ul>
+    </li>
+		{% if friends %}
+
+			<ul class="list-group">
+				{% for friend in friends %}
+		    <li class="list-group-item">
+		    	<a href="{% url 'accounts:view_profile_with_pk' pk=friend.pk %}">
+		    		<h3>{{ friend.username }}</h3>
+		    	</a>
+		    	<a href="{% url 'home:change_friends' operation='remove' pk=friend.pk %}">
+		    	<button type="button" class="btn btn-default">Remove Friend</button>
+		    	</a>
+		    </li>
+		    {% endfor %}
+			</ul>
+    {% else %}
+    <div class="alert alert-dark" role="alert">
+  		You have 0 friends
+		</div>
+    {% endif %}
+	</div>
+</div>	
+
+{% endblock %}

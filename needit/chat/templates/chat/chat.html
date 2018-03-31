@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Dialog</title>
+<link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+
+{% endblock %}
+{% block body %}
+<div class="container">
+</div>
+<div class="dialog-space">
+  <div class="body-chat">
+    <div class="chatbox">
+      <div class="chatlogs" id="chat-log">
+        {% for message in messages %}
+          {% if message.id_user == myself.id %}
+          <div class="chat self">
+            {% if myself.is_staff %}
+            <div class="user" style="background-image:url('/media/profile_image/staff-standart.jpg')">
+            {% elif myself.userprofille.image %}
+            <div class="user" style="background-image:url('{{ myself.userprofille.image.url }}')">
+            {% else %}
+              {% if myself.userprofille.sex == 'M' %}
+                <div class="user" style="background-image:url('/media/profile_image/gentle-standart.jpg')">
+              {% else %}
+                <div class="user" style="background-image:url('/media/profile_image/lady-standart.jpg')">
+              {% endif %}
+            {% endif %}
+          {% else %}
+          <div class="chat friend">
+            {% if interlocutor.is_staff %}
+            <div class="user" style="background-image:url('/media/profile_image/staff-standart.jpg')">
+            {% elif interlocutor.userprofille.image %}
+            <div class="user" style="background-image:url('{{ interlocutor.userprofille.image.url }}')">
+            {% else %}
+              {% if interlocutor.userprofille.sex == 'M' %}
+                <div class="user" style="background-image:url('/media/profile_image/gentle-standart.jpg')">
+              {% else %}
+                <div class="user" style="background-image:url('/media/profile_image/lady-standart.jpg')">
+              {% endif %}
+            {% endif %}
+          {% endif %}
+            </div>
+            <p class="chat-message">{{ message.content }}</p> 
+          </div>
+        {% endfor %}
+      </div>
+      <div class="chat-form">
+        <input 
+            id="chat-message-input" 
+            type="text" 
+            class="form-control" 
+            size="100" 
+            placeholder="type a message..."
+            aria-label="Recipient's username"
+            aria-describedby="basic-addon2"
+          />
+          <button id="chat-message-submit" type="button">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script> 
+  var chatList = document.getElementById('chat-log'); 
+  chatList.scrollTop = chatList.scrollHeight; 
+</script>
+<script>
+    var roomName = {{ room_name_json }};
+
+    var chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + roomName + '/');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        var pk = data['pk'];
+        var msg_date = data['msg_date'];
+        // document.querySelector('.chat-body').value += (message + '\n');
+        var msg_in_html = `<div class="chat `;
+        if (pk=={{myself.id}}){
+          msg_in_html += `self">`;
+          msg_in_html += `<div class="user" style="background-image:url('`;
+          {% if myself.is_staff %}
+          msg_in_html += `/media/profile_image/staff-standart.jpg`;
+          {% elif myself.userprofille.image %}
+          msg_in_html += `{{ myself.userprofille.image.url }}`;
+          {% else %}
+            {% if myself.userprofille.sex == 'M' %}
+            msg_in_html += `/media/profile_image/gentle-standart.jpg`;
+            {% else %}
+            msg_in_html += `/media/profile_image/lady-standart.jpg`;
+            {% endif %}
+          {% endif %}
+        } else {
+          msg_in_html += `friend">`;
+          msg_in_html += `<div class="user" style="background-image:url('`;
+          {% if interlocutor.is_staff %}
+          msg_in_html += `/media/profile_image/staff-standart.jpg`;
+          {% elif interlocutor.userprofille.image %}
+          msg_in_html += `{{ interlocutor.userprofille.image.url }}`;
+          {% else %}
+            {% if interlocutor.userprofille.sex == 'M' %}
+            msg_in_html += `/media/profile_image/gentle-standart.jpg`;
+            {% else %}
+            msg_in_html += `/media/profile_image/lady-standart.jpg`;
+            {% endif %}
+          {% endif %}
+        };
+        msg_in_html += `')"></div><p class="chat-message">`+message+`</p></div>`;
+        console.log(msg_in_html);
+        $('.chatlogs').append(msg_in_html);
+        if (pk=={{myself.id}}){
+          var chatList = document.getElementById('chat-log'); 
+          chatList.scrollTop = chatList.scrollHeight; 
+        };
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = function(e) {
+
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        if (message != '') {
+          chatSocket.send(JSON.stringify({
+            'pk': {{ myself.id }},
+            'message': message
+            
+          }));
+        };
+
+
+        messageInputDom.value = '';
+    };
+</script>
+{% endblock %}
