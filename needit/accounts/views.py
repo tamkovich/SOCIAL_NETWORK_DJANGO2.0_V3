@@ -41,7 +41,7 @@ def view_profile(request, pk=None):
         user = User.objects.get(pk=pk)
         try:
             friend = Friend.objects.get(current_user=request.user)
-            if user in friend.users:
+            if user in friend.users.all():
                 is_he_your_friend = True
         except:
             is_he_your_friend = None
